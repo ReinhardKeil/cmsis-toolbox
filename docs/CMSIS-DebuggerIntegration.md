@@ -39,7 +39,7 @@ The CMSIS View offers for the bare metal targets action buttons to:
 
 The action button:
 - **Load & Run** executes from tasks.json the command `CMSIS Load+Run`.
-- **Load & Debug** executes from launch.json the first `"request": "attach"` with `cmsis:` section. If not present from tasks.json the command `CMSIS Load+Debug`.
+- **Load & Debug** executes from launch.json the first `"request": "launch"` with `cmsis:` section. If not present from tasks.json the command `CMSIS Load+Debug`.
 
 Further commands are available under `...`:
 - **Load** executes from tasks.json the command `CMSIS Load`.

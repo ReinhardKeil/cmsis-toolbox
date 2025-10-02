@@ -1031,11 +1031,13 @@ solution:
         - SE_SERVICES: OFF 
         - CMAKE_BUILD_TYPE: Release
 
-  west:
-    - app-path: ./alif/samples/drivers/ipm/ipm_arm_mhuv2/rtss_he
-      board: $west-board$_he
-      device: :M55_HE
-    - app-path: ./alif/samples/drivers/ipm/ipm_arm_mhuv2/rtss_hp
-      board: $west-board$_hp
-      device: :M55_HP
+  projects:
+    - west:
+        app-path: ./alif/samples/drivers/ipm/ipm_arm_mhuv2/rtss_he
+        board: $west-board$_he
+        device: :M55_HE
+    - west
+        app-path: ./alif/samples/drivers/ipm/ipm_arm_mhuv2/rtss_hp
+        board: $west-board$_hp
+        device: :M55_HP
 ```

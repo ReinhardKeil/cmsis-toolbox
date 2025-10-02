@@ -403,7 +403,6 @@ The `solution:` node is the start of a `*.csolution.yml` file that collects rela
 &nbsp;&nbsp;&nbsp; [`projects:`](#projects)          |**Required**| List of projects that belong to the solution.
 &nbsp;&nbsp;&nbsp; [`executes:`](#executes)          |  Optional  | Additional pre or post build steps using external tools.
 &nbsp;&nbsp;&nbsp; [`misc:`](#misc)                  |  Optional  | Literal tool-specific controls.
-&nbsp;&nbsp;&nbsp; [`west:`](#west)                  |  Optional  | Enable West "build orchestration wrapper" for Zephyr projects.
 
 **Example:**
 
@@ -1735,9 +1734,13 @@ The YAML structure of the section `projects:` is:
 
 `projects:`                                               |              | Content
 :---------------------------------------------------------|--------------|:------------------------------------
-[`- project:`](#project)                                  | **Required** | Path to the project file.
+[`- project:`](#project)                                  | **Required** | Path to the *csolution project* file.
+[`- west:`](#west)                                        | **Required** | Add West application (Zephyr project).
 &nbsp;&nbsp;&nbsp; [`for-context:`](#for-context)         |   Optional   | Include project for a list of *build* and *target* types.
 &nbsp;&nbsp;&nbsp; [`not-for-context:`](#not-for-context) |   Optional   | Exclude project for a list of *build* and *target* types.
+
+!!! Note
+    Either a *csolution project* (using `project:`) or a West application (using `west:`) can be specified, but not both.
 
 **Examples:**
 
@@ -2049,18 +2052,19 @@ Enable the [West build system integration](build-overview.md#west-build-system-i
 
 ### `west:`
 
-Use the command `west build` to generate images from application source code specified in the `west:` node.  When the `west:` node is applied (even with an empty `app-path` source directory list), the [environment variables for the west build system](build-operation.md#west-integration) are created based on the [`compiler:`](#compiler) selection.
+Use the command `west build` to generate images from application source directory specified in the `- west:` node.  
 
-`west:`                                                   |              | Content
+ToDo: review this (feature should move to VS Code extension)
+When the `- west:` node is applied (even with an empty `app-path` source directory list), the [environment variables for the west build system](build-operation.md#west-integration) are created based on the [`compiler:`](#compiler) selection.
+
+`- west:`                                                   |              | Content
 :---------------------------------------------------------|:-------------|:------------------------------------
-`- app-path:`                                             | **Required** | Path to the application source directory.
+&nbsp;&nbsp;&nbsp; `app-path:`                            | **Required** | Path to the application source directory.
 &nbsp;&nbsp;&nbsp; `project-id:`                          |   Optional   | Project identifier (default: last sub-dir name of `app-path`).
 &nbsp;&nbsp;&nbsp; `board:`                               |   Optional   | Board name used for west build invocation (default: [variable `$west-board$`](#variable-west-board)).
 &nbsp;&nbsp;&nbsp; [`device:`](#device)                   |   Optional   | Specify the processor core for execution of the generated image (used in `*.cbuild-run.yml`).
 &nbsp;&nbsp;&nbsp; [`west-defs:`](#west-defs)             |   Optional   | Define symbol settings for the [west build](#west-build) system.
 &nbsp;&nbsp;&nbsp; `west-opt:`                            |   Optional   | Options for the `west` tool (default: empty).
-&nbsp;&nbsp;&nbsp; [`for-context:`](#not-for-context)     |   Optional   | Exclude run command for a list of *build* and *target* types  (only supported in `*.cproject.yml`).
-&nbsp;&nbsp;&nbsp; [`not-for-context:`](#not-for-context) |   Optional   | Exclude run command for a list of *build* and *target* types  (only supported in `*.cproject.yml`).
 
 ### `west-defs:`
 
@@ -2122,37 +2126,15 @@ solution:
       west-defs:
         - CONFIG_SIZE_OPTIMIZATIONS: y
 
-  west:
-    - project-id: M55_HE
-      app-path: ./rtss_he
-      board: $west-board$_he
-      device: :M55_HE
-      west-defs:
-        - RTSS_HP_MHU0: ON
-
-    - project-id: M55_HP
-      app-path: ./rtss_hp
-      board: $west-board$_hp
-      device: :M55_HP
-      west-defs:
-        - RTSS_HE_MHU0: ON
-```
-
-Current Implementation is different:
-
-```yml
-  # List related projects.
   projects:
-    - project: ./M55_HE/M55_HE.cproject.yml
-      west:
+    - west:
         project-id: M55_HE
         app-path: ./rtss_he
         board: $west-board$_he
         device: :M55_HE
         west-defs:
           - RTSS_HP_MHU0: ON
-    - project: ./M55_HP/M55_HP.cproject.yml
-      west:
+    - west:
         project-id: M55_HP
         app-path: ./rtss_hp
         board: $west-board$_hp

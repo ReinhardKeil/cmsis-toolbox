@@ -1321,7 +1321,7 @@ The `target-types:` node may include [toolchain options](#toolchain-options), [t
 &nbsp;&nbsp;&nbsp; [`variables:`](#variables)      |   Optional   | Variables that can be used to define project components.
 &nbsp;&nbsp;&nbsp; [`memory:`](#memory)            |   Optional   | Add additional off-chip memory available in target hardware.
 &nbsp;&nbsp;&nbsp; [`target-set:`](#target-set)    |   Optional   | One or more target-set configurations for projects, images, and debugger.
-&nbsp;&nbsp;&nbsp; [`west-defs:`](#west-defs)      |   Optional   | Defines in `CMake` format for the [west build](#west-build) system.
+&nbsp;&nbsp;&nbsp; [`west-defs:`](#west-defs)      |   Optional   | Define symbol settings for the [west build](#west-build) system.
 
 !!! Note
     Either `device:` or `board:` is required.
@@ -1348,7 +1348,7 @@ The `build-types:` node may include [toolchain options](#toolchain-options):
 &nbsp;&nbsp;&nbsp; [`misc:`](#misc)                |   Optional   | Literal tool-specific controls.
 &nbsp;&nbsp;&nbsp; [`context-map:`](#context-map)  |   Optional   | Use different `build-types:` for specific projects.
 &nbsp;&nbsp;&nbsp; [`variables:`](#variables)      |   Optional   | Variables that can be used to define project components.
-&nbsp;&nbsp;&nbsp; [`west-defs:`](#west-defs)      |   Optional   | Defines in `CMake` format for the [west build](#west-build) system.
+&nbsp;&nbsp;&nbsp; [`west-defs:`](#west-defs)      |   Optional   | Define symbol settings for the [west build](#west-build) system.
 
 **Example:**
 
@@ -2057,7 +2057,7 @@ Use the command `west build` to generate images from application source code spe
 &nbsp;&nbsp;&nbsp; `project-id:`                          |   Optional   | Project identifier (default: last sub-dir name of `app-path`).
 &nbsp;&nbsp;&nbsp; `board:`                               |   Optional   | Board name used for west build invocation (default: [variable `$west-board$`](#variable-west-board)).
 &nbsp;&nbsp;&nbsp; [`device:`](#device)                   |   Optional   | Specify the processor core for execution of the generated image (used in `*.cbuild-run.yml`).
-&nbsp;&nbsp;&nbsp; [`west-defs:`](#west-defs)             |   Optional   | Defines in `CMake` format. The `west-defs:` from build and target-type are added.
+&nbsp;&nbsp;&nbsp; [`west-defs:`](#west-defs)             |   Optional   | Define symbol settings for the [west build](#west-build) system.
 &nbsp;&nbsp;&nbsp; `west-opt:`                            |   Optional   | Options for the `west` tool (default: empty).
 &nbsp;&nbsp;&nbsp; [`for-context:`](#not-for-context)     |   Optional   | Exclude run command for a list of *build* and *target* types  (only supported in `*.cproject.yml`).
 &nbsp;&nbsp;&nbsp; [`not-for-context:`](#not-for-context) |   Optional   | Exclude run command for a list of *build* and *target* types  (only supported in `*.cproject.yml`).
@@ -2081,9 +2081,85 @@ The information provided with the `west:` and `west-def:` nodes are used to gene
     - The `--sysbuild` option is not supported as the *csolution project* manages multiple applications and images.
     - The cbuild option `--rebuild` is mapped to `--pristine always`; without `--rebuild` west is called with `--pristine auto`.
 
-**Examples:**
+**Example:**
 
-ToDo
+```yml
+solution:
+  compiler: GCC
+
+  packs:
+    - pack: AlifSemiconductor::Ensemble@^2.0.0-0
+    - pack: ARM::CMSIS
+
+  # List different hardware targets that are used to deploy the solution.
+  target-types:
+    - type: DevKit-E7
+      board: Alif Semiconductor::DevKit-E7
+      device: Alif Semiconductor::AE722F80F55D5LS
+      variables:
+        - west-board: alif_e7_dk_rtss
+      west-defs:
+        - SE_SERVICES: OFF
+      target-set:
+        - set:
+          debugger:
+            name: CMSIS-DAP@pyOCD
+            port: 3333
+            protocol: swd
+            clock: 10000000
+            start-pname: M55_HE
+          images:
+            - project-context: M55_HE.Debug
+            - project-context: M55_HP.Debug
+
+  build-types:
+    - type: Debug
+      west-defs:
+        - CONFIG_DEBUG: y
+        - CONFIG_DEBUG_THREAD_INFO: y
+        - CONFIG_DEBUG_OPTIMIZATIONS: y
+    - type: Release
+      west-defs:
+        - CONFIG_SIZE_OPTIMIZATIONS: y
+
+  west:
+    - project-id: M55_HE
+      app-path: ./rtss_he
+      board: $west-board$_he
+      device: :M55_HE
+      west-defs:
+        - RTSS_HP_MHU0: ON
+
+    - project-id: M55_HP
+      app-path: ./rtss_hp
+      board: $west-board$_hp
+      device: :M55_HP
+      west-defs:
+        - RTSS_HE_MHU0: ON
+```
+
+Current Implementation is different:
+
+```yml
+  # List related projects.
+  projects:
+    - project: ./M55_HE/M55_HE.cproject.yml
+      west:
+        project-id: M55_HE
+        app-path: ./rtss_he
+        board: $west-board$_he
+        device: :M55_HE
+        west-defs:
+          - RTSS_HP_MHU0: ON
+    - project: ./M55_HP/M55_HP.cproject.yml
+      west:
+        project-id: M55_HP
+        app-path: ./rtss_hp
+        board: $west-board$_hp
+        device: :M55_HP
+        west-defs:
+          - RTSS_HE_MHU0: ON
+```
 
 ## Pre/Post Build Steps
 

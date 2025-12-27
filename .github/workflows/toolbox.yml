@@ -33,11 +33,11 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
         with:
           egress-policy: audit
 
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - uses: JoshuaTheMiller/conditional-build-matrix@81b51eb8d89e07b86404934b5fecde1cea1163a5 # v2.0.1
         id: set-matrix
         with:
@@ -55,12 +55,12 @@ jobs:
 
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
         with:
           egress-policy: audit
 
       - name: Checkout cmsis-toolbox repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
 
@@ -308,7 +308,7 @@ jobs:
         working-directory: toolbox/cmsis-toolbox-${{ matrix.target }}-${{ matrix.arch }}
 
       - name: Set up Python
-        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
+        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -354,7 +354,7 @@ jobs:
         working-directory: toolbox
 
       - name: Archive binaries
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: cmsis-toolbox-${{ matrix.target }}-${{ matrix.arch }}
           path: ./toolbox/cmsis-toolbox-${{ matrix.target }}-${{ matrix.arch }}${{ matrix.archive_extension }}
@@ -378,7 +378,7 @@ jobs:
 
       - name: Archive Debian Package
         if: ${{ matrix.target == 'linux' && matrix.arch == 'amd64' }}
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: cmsis-toolbox-debian-package
           path: ./debian/build/cmsis-toolbox_*_amd64.deb
@@ -404,17 +404,17 @@ jobs:
           - { os: ubuntu-22.04, target: linux, arch: arm64}
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
         with:
           egress-policy: audit
 
       - name: Checkout cmsis-toolbox
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           submodules: recursive
 
       - name: Download cmsis toolbox ${{ matrix.config.target }} ${{ matrix.config.arch }}
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: cmsis-toolbox-${{ matrix.config.target }}-${{ matrix.config.arch }}
           path: archive
@@ -432,7 +432,7 @@ jobs:
         run: tar -xvf archive/cmsis-toolbox-${{ matrix.config.target }}-${{ matrix.config.arch }}.tar.gz -C toolbox
 
       - name: Set up Python
-        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
+        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
         with:
           python-version: '3.10'
 
@@ -446,7 +446,7 @@ jobs:
           pytest --base-path=toolbox/cmsis-toolbox-${{ matrix.config.target }}-${{ matrix.config.arch }} test/packaging/tests.py -rA --junitxml=test-results-${{ matrix.config.target }}-${{ matrix.config.arch }}.xml
 
       - name: Archive test report
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: toolbox-test-${{ matrix.config.target }}-${{ matrix.config.arch }}
           path: ./test-results-*.xml
@@ -465,17 +465,17 @@ jobs:
       pull-requests: write
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
         with:
           egress-policy: audit
 
       - name: Download Artifacts
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           path: artifacts
 
       - name: publish test results
-        uses: EnricoMi/publish-unit-test-result-action/linux@34d7c956a59aed1bfebf31df77b8de55db9bbaaf # v2.21.0
+        uses: EnricoMi/publish-unit-test-result-action/linux@27d65e188ec43221b20d26de30f4892fad91df2f # v2.22.0
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           report_individual_runs: true
@@ -489,73 +489,73 @@ jobs:
 
     steps:
       - name: Download cmsis toolbox windows amd64 zip
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: cmsis-toolbox-windows-amd64
           path: toolbox/zip
 
       - name: Download cmsis toolbox windows arm64 zip
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: cmsis-toolbox-windows-arm64
           path: toolbox/zip
 
       - name: Download cmsis toolbox linux amd64 zip
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: cmsis-toolbox-linux-amd64
           path: toolbox/zip
 
       - name: Download cmsis toolbox linux arm64 zip
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: cmsis-toolbox-linux-arm64
           path: toolbox/zip
 
       - name: Download cmsis toolbox darwin amd64 zip
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: cmsis-toolbox-darwin-amd64
           path: toolbox/zip
 
       - name: Download cmsis toolbox darwin arm64 zip
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: cmsis-toolbox-darwin-arm64
           path: toolbox/zip
 
       - name: Download test report windows-amd64
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: toolbox-test-windows-amd64
           path: testreports/
 
       - name: Download test report windows-arm64
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: toolbox-test-windows-arm64
           path: testreports/
 
       - name: Download unit test report linux-amd64
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: toolbox-test-linux-amd64
           path: testreports/
 
       - name: Download unit test report linux-arm64
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: toolbox-test-linux-arm64
           path: testreports/
 
       - name: Download unit test report darwin-amd64
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: toolbox-test-darwin-amd64
           path: testreports/
 
       - name: Download unit test report darwin-arm64
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: toolbox-test-darwin-arm64
           path: testreports/
@@ -595,7 +595,7 @@ jobs:
 
       # Debian Package
       - name: Download Debian Package
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: cmsis-toolbox-debian-package
           path: debian

@@ -105,11 +105,17 @@ cbuild-mlops:
 
   hardware:                         # for testing on hardware
     active: AppKit-E8-U85           # target-set name passed to cbuild with option --active, i.e. cbuild my.csolution.yml --active AppKit-E8-U85
-    out-dir: <directory>            # directory for output files
+    cbuild-run: out/SDS-ml.AppKit-E8-U85.cbuild-run.yml        # cbuild-run file for execution on hardware using pyOCD (JLink needs command-line derived from output: node)
+    output:
+      - file: out/AppKit-E8-U85/Debug/AlgorithmTest.axf
+        type: elf
 
   simulator:                        # for testing with simulation Models
     active: SSE-320-U85@FVP-Test    # target-set name passed to cbuild with option --active
-    out-dir: <directory>            # directory for output files
+    cbuild-run: out/SDS-ml.SSE-320-U85.cbuild-run.yml        # cbuild-run file for execution on simulation (currently not used as there is no translator for FVP models).
+    output:
+      - file: out/SSE-320_U85/Debug/AlgorithmTest.axf
+        type: elf
     model: FVP_Corstone_SSE-320     # name of the FVP model to use
     config-file: Board/Corstone-320/fvp_config.txt   # configuration file for the ML model
 ```
